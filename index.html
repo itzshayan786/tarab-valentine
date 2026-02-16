@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Tarab ❤️</title>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff8fa3;
+            --bg-dark: #0f0406;
+            --bg-gradient: radial-gradient(circle at center, #2d0b13 0%, #0a0203 100%);
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text: #fff0f3;
+            --shayan-msg: #3d3d3d;
+            --sachi-msg: #ff4d6d;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Mobile viewport fix */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Ambient Background Effects */
+        .bg-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 77, 109, 0.15), transparent 70%);
+            animation: pulseGlow 4s infinite alternate;
+            z-index: 0;
+            pointer-events: none;
+            will-change: opacity, transform;
+        }
+
+        @keyframes pulseGlow { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.1); } }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            bottom: -10px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.6;
+            pointer-events: none;
+            will-change: transform;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp { to { transform: translateY(-110vh) rotate(360deg); opacity: 0; } }
+
+        /* Main Card Container */
+        .container {
+            z-index: 10;
+            width: 90%;
+            max-width: 480px;
+            /* Adaptive height for mobile */
+            max-height: 90dvh;
+            overflow-y: auto;
+            scrollbar-width: none; /* Hide scrollbar Firefox */
+            -ms-overflow-style: none; /* Hide scrollbar IE */
+            
+            padding: 2.5rem;
+            border-radius: 24px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.5s ease;
+            position: relative;
+        }
+
+        .container::-webkit-scrollbar { display: none; /* Hide scrollbar Chrome/Safari */ }
+
+        h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; background: linear-gradient(45deg, #fff, #ff8fa3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-weight: 300; margin-bottom: 1.5rem; line-height: 1.4; font-size: 1.4rem; color: #fff; }
+        p { font-weight: 300; opacity: 0.9; margin-bottom: 2rem; line-height: 1.6; font-size: 1.1rem; letter-spacing: 0.5px; }
+
+        /* Buttons */
+        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 80%;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+            /* Touch Optimization */
+            min-height: 50px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn:hover:not(:disabled) { transform: translateY(-3px) scale(1.02); background: #ff758f; box-shadow: 0 10px 25px rgba(255, 77, 109, 0.5); }
+        .btn:active:not(:disabled) { transform: scale(0.96); }
+        
+        .btn:disabled { 
+            background: #333; 
+            color: #777;
+            cursor: not-allowed; 
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
+        /* Scene Management */
+        .scene { display: none; width: 100%; opacity: 0; transition: opacity 0.8s ease; will-change: opacity; }
+        .scene.active { display: block; opacity: 1; }
+        .scene.fade-out { opacity: 0; }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Chat Styles */
+        .chat-box { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .bubble { 
+            padding: 10px 16px; 
+            border-radius: 18px; 
+            font-size: 0.95rem; 
+            max-width: 85%; 
+            position: relative; 
+            opacity: 0; 
+            transform: translateY(10px); 
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+            text-align: left;
+        }
+        .shayan { align-self: flex-start; background: var(--shayan-msg); color: #fff; border-bottom-left-radius: 4px; }
+        .sachi { align-self: flex-end; background: var(--sachi-msg); color: #fff; border-bottom-right-radius: 4px; }
+        
+        @keyframes popIn { to { opacity: 1; transform: translateY(0); } }
+
+        /* Typography & Effects */
+        .typing-text { border-right: 2px solid var(--primary); animation: blink 0.7s infinite; white-space: pre-wrap; }
+        @keyframes blink { 50% { border-color: transparent; } }
+        
+        .heartbeat { animation: heartBeatAnim 1.5s infinite; display: inline-block; }
+        @keyframes heartBeatAnim { 0% { transform: scale(1); } 15% { transform: scale(1.2); } 30% { transform: scale(1); } 45% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
+        /* Specific Elements */
+        #no-btn { position: absolute; width: auto; padding: 10px 20px; z-index: 20; transition: transform 0.2s ease; will-change: transform; }
+        .countdown { font-size: 4rem; font-weight: 800; color: var(--primary); text-shadow: 0 0 20px rgba(255, 77, 109, 0.5); }
+        
+        .final-signature {
+            margin-top: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: italic;
+            color: var(--secondary);
+            font-size: 1.2rem;
+        }
+
+        /* ================= MOBILE OPTIMIZATION ================= */
+        @media (max-width: 480px) {
+            .container { 
+                padding: 1.8rem 1.2rem; 
+                width: 92%; 
+                border-radius: 20px;
+            }
+            h1 { font-size: 1.7rem; }
+            h2 { font-size: 1.3rem; margin-bottom: 1rem; }
+            p { font-size: 1rem; margin-bottom: 1.5rem; line-height: 1.5; }
+            
+            /* Full width buttons for ease of use */
+            .btn { width: 100%; padding: 15px 0; font-size: 1.05rem; }
+            .btn-group { gap: 12px; }
+            
+            /* Adjust chat bubbles for small screens */
+            .bubble { max-width: 90%; font-size: 0.9rem; padding: 10px 14px; }
+            
+            /* Compact vertical spacing */
+            .chat-box { margin-bottom: 15px; }
+            .final-signature { margin-top: 15px; font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" src="channave.mp3" preload="auto"></audio>
+    
+    <div class="bg-glow"></div>
+    <div id="particle-container"></div>
+    <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
+
+    <div class="container">
+        
+        <div id="scene-0" class="scene active">
+            <h1>Hey Tarab ❤️</h1>
+            <p style="margin-top: 10px;">Muzammil ne tumhare liye ek chhota sa Valentine surprise banaya hai…<br><br>Lekin bina music ke entry allowed nahi hai 😌</p>
+            <div class="btn-group">
+                <button class="btn" id="play-btn" onclick="startMusic()">🎵 Play Music</button>
+                <button class="btn" id="enter-btn" onclick="nextScene(1)" disabled>Enter Journey</button>
+            </div>
+            <p style="font-size: 0.85rem; margin-top: 20px; opacity: 0.6;">Rules simple hain — music on, phir entry 😏</p>
+        </div>
+
+        <div id="scene-1" class="scene">
+            <p id="type-1" style="min-height: 80px;"></p>
+            <button class="btn" onclick="nextScene(2)">Aage chalo ⮕</button>
+        </div>
+
+        <div id="scene-2" class="scene">
+            <p>Tumhari ek smile…<br>seedha din ko better bana deti hai. ✨</p>
+            <button class="btn" onclick="nextScene(3)">Sach mein?</button>
+        </div>
+
+        <div id="scene-3" class="scene">
+            <p>Muzammil ke dimaag me ek ajeeb si problem ho gayi hai…<br>har random moment me tum aa jaati ho 😅</p>
+            <button class="btn" onclick="nextScene(4)">Kyun bhala?</button>
+        </div>
+
+        <div id="scene-4" class="scene">
+            <p>Tumhe kya lagta hai, tum Muzammil ke liye kya ho?</p>
+            <div class="btn-group">
+                <button class="btn" style="background: #444;" onclick="handleChoice('friend')">Bas ek friend</button>
+                <button class="btn" onclick="handleChoice('special')">Thodi si special ❤️</button>
+            </div>
+        </div>
+
+        <div id="scene-5" class="scene">
+            <p>Kabhi kabhi na…<br>zindagi me kuch log bina warning ke important ban jaate hain.</p>
+            <button class="btn" onclick="nextScene(6)">Continue...</button>
+        </div>
+
+        <div id="scene-6" class="scene">
+            <p style="font-style: italic; color: var(--secondary);">"Kabhi socha nahi tha ki ek simple si baat se koi itna important ban sakta hai…"</p>
+            <button class="btn" onclick="nextScene(7)">Next 🌸</button>
+        </div>
+
+        <div id="scene-7" class="scene">
+            <div class="chat-box" id="chat-container"></div>
+            <button class="btn" id="chat-next-btn" style="display:none" onclick="nextScene(8)">Chal ab sach bol ⮕</button>
+        </div>
+
+        <div id="scene-8" class="scene">
+            <p>Sach sunne ke liye ready ho?</p>
+            <div style="height: 80px; position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
+                <button class="btn" id="no-btn" style="background: #444; width: auto; min-width: 100px;" onmouseover="moveNo()" ontouchstart="moveNo()">Nahi 😅</button>
+                <button class="btn" style="width: auto; min-width: 120px; position: absolute; left: 50%; transform: translateX(-50%);" onclick="startCountdown()">Haan ❤️</button>
+            </div>
+        </div>
+
+        <div id="scene-9" class="scene">
+            <div class="countdown" id="countdown-display">3</div>
+        </div>
+
+        <div id="scene-10" class="scene">
+            <div id="reveal-text" style="text-align: left; min-height: 200px;"></div>
+            <button class="btn" style="margin-top: 20px;" onclick="nextScene(11)">One last thing... ❤️</button>
+        </div>
+
+        <div id="scene-11" class="scene">
+            <h2 style="font-family: serif; font-style: italic; color: var(--secondary);">One last thing…</h2>
+            <div id="final-text" style="text-align: left; min-height: 220px;"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // Configuration
+        const audio = document.getElementById('bgMusic');
+        const totalScenes = 12; 
+        let currentScene = 0;
+        
+        // Setup Particles (Optimized for Mobile)
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            // Reduce particle frequency for better mobile performance
+            setInterval(() => {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                const size = Math.random() * 8 + 4;
+                p.style.width = `${size}px`;
+                p.style.height = `${size}px`;
+                p.style.left = `${Math.random() * 100}vw`;
+                p.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                p.style.background = Math.random() > 0.5 ? 'var(--primary)' : 'var(--secondary)';
+                container.appendChild(p);
+                // Remove particle after animation to keep DOM light
+                setTimeout(() => p.remove(), 10000);
+            }, 600); // Slower generation rate
+        }
+        createParticles();
+
+        // Music Control
+        function startMusic() {
+            audio.currentTime = 24; // Start at 0:24
+            audio.play().then(() => {
+                document.getElementById('play-btn').innerHTML = "🎵 Music Playing...";
+                document.getElementById('play-btn').style.background = "#2a9d8f";
+                document.getElementById('enter-btn').disabled = false;
+                document.getElementById('enter-btn').style.transform = "scale(1.05)";
+                
+                // Monitor for fade out time - UPDATED TO 2:00 (120 seconds)
+                const checkTime = setInterval(() => {
+                    // Start fading out slightly before 2:00
+                    if(audio.currentTime >= 118) { 
+                        fadeOutAudio();
+                        clearInterval(checkTime);
+                    }
+                }, 1000);
+            }).catch(e => alert("Please tap anywhere to allow music first!"));
+        }
+
+        function fadeOutAudio() {
+            const fade = setInterval(() => {
+                if(audio.volume > 0.05) {
+                    audio.volume -= 0.05;
+                } else {
+                    audio.pause();
+                    clearInterval(fade);
+                }
+            }, 200);
+        }
+
+        // Navigation Logic
+        function nextScene(n) {
+            const current = document.getElementById(`scene-${currentScene}`);
+            current.classList.add('fade-out');
+            
+            setTimeout(() => {
+                current.classList.remove('active', 'fade-out');
+                currentScene = n;
+                const next = document.getElementById(`scene-${n}`);
+                next.classList.add('active');
+                
+                // Update progress bar
+                const progress = (n / 11) * 100;
+                document.getElementById('progress').style.width = `${progress}%`;
+
+                // Scene Specific Triggers
+                if(n === 1) typeWriter("Waise ek baat bolun…\ntumhari yaad aati hai bina kisi reason ke.", "type-1");
+                if(n === 7) runChat();
+                if(n === 10) runReveal();
+                if(n === 11) runFinal();
+            }, 400); // Faster transition for snappy feel
+        }
+
+        // Typing Animation
+        function typeWriter(text, elementId, speed = 40, callback = null) {
+            let i = 0;
+            const elem = document.getElementById(elementId);
+            elem.innerHTML = "";
+            elem.classList.add('typing-text');
+            
+            function type() {
+                if (i < text.length) {
+                    elem.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    elem.classList.remove('typing-text');
+                    if(callback) callback();
+                }
+            }
+            type();
+        }
+
+        // Logic Functions
+        function handleChoice(choice) {
+            if(choice === 'friend') {
+                alert("Jhooth mat bolo 😏 Try again!");
+            } else {
+                nextScene(5);
+            }
+        }
+
+        function runChat() {
+            const messages = [
+                { sender: 'shayan', text: "Tu free hai?" },
+                { sender: 'sachi', text: "Haan, kyun?" },
+                { sender: 'shayan', text: "Kuch nahi… bas yaad aa rahi thi 😌" }
+            ];
+            const container = document.getElementById('chat-container');
+            
+            messages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = `bubble ${msg.sender}`;
+                    div.innerText = msg.text;
+                    container.appendChild(div);
+                    // Scroll to bottom of chat if needed
+                    if(index === messages.length - 1) {
+                        setTimeout(() => document.getElementById('chat-next-btn').style.display = 'inline-block', 500);
+                    }
+                }, index * 1200);
+            });
+        }
+
+        // Optimized for Touch and Mouse
+        function moveNo(e) {
+            // Prevent double firing on touch devices
+            if(e && e.type === 'touchstart') e.preventDefault();
+            
+            const btn = document.getElementById('no-btn');
+            // Smaller range for mobile to keep button on screen
+            const range = window.innerWidth < 480 ? 100 : 200;
+            
+            const x = (Math.random() - 0.5) * range;
+            const y = (Math.random() - 0.5) * range;
+            
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function startCountdown() {
+            nextScene(9);
+            let count = 3;
+            const display = document.getElementById('countdown-display');
+            const timer = setInterval(() => {
+                count--;
+                if(count > 0) {
+                    display.innerText = count;
+                } else {
+                    display.innerText = "Ready?";
+                    clearInterval(timer);
+                    setTimeout(() => nextScene(10), 1000);
+                }
+            }, 1000);
+        }
+
+        function runReveal() {
+            // Heart confetti
+            for(let i=0; i<30; i++) {
+                const h = document.createElement('div');
+                h.innerText = '❤️';
+                h.style.position = 'fixed';
+                h.style.left = Math.random() * 100 + 'vw';
+                h.style.top = '-50px';
+                h.style.fontSize = Math.random() * 20 + 20 + 'px';
+                h.style.transition = `top ${Math.random() * 2 + 2}s ease-in, opacity 2s`;
+                h.style.zIndex = 5;
+                h.style.pointerEvents = 'none'; // Click-through
+                document.body.appendChild(h);
+                setTimeout(() => {
+                    h.style.top = '110vh';
+                    h.style.opacity = '0';
+                }, 100);
+            }
+
+            const msg = `Tarab,\npata nahi kab tum meri aadat ban gayi.\nBusy din ho ya boring moment,\ntumhari ek yaad sab kuch better bana deti hai.\n\nAur haan…\ntum sirf special nahi ho,\ntum meri roz ki khushi ho.\n\n— Muzammil ❤️`;
+            
+            typeWriter(msg, "reveal-text", 40);
+            document.querySelector('.container').style.boxShadow = "0 0 50px rgba(255, 77, 109, 0.4)";
+        }
+
+        function runFinal() {
+            const finalMsg = `Tarab,\nagar zindagi ek kahani hoti na,\ntoh main har page par tumhe hi likhta.\n\nTum meri aadat nahi,\nmeri zarurat ban chuki ho.\n\nAur shayad…\nyeh hi pyaar hai.\n\nHappy Valentine’s Day.\n\n— Tumhara, Muzammil ❤️`;
+            
+            // Soft heartbeat background
+            document.querySelector('.bg-glow').style.animationDuration = "1.5s"; // faster pulse
+            
+            typeWriter(finalMsg, "final-text", 50, () => {
+                // Ensure music fades out at the very end of reading even if time hasn't elapsed
+                setTimeout(fadeOutAudio, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
